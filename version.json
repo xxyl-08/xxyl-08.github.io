@@ -1,0 +1,10 @@
+{
+  "latestVersionCode": 109,
+  "latestVersionName": "1.0.7",
+  "minSupportedVersionCode": 106,
+  "forceUpdate": false,
+  "blacklistedVersions": [],
+  "message": "发现新版本 v1.0.7",
+  "updateUrl": "https://xxyl-08.github.io/apk/GlobalKit-v109-1.0.7-release.apk",
+  "releaseNotes": "新增越南；修复更改国家不生效问题"
+}

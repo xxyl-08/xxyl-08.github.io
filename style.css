@@ -1,0 +1,62 @@
+:root{--bg:#0a0e17;--card:#131a30;--border:#232d4d;--text:#e8ecf8;--muted:#9aa5c3;--primary:#6c7cff;--primary2:#4da3ff;--accent:#7c8aff}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:rgba(10,14,23,.82);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1080px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:18px;font-weight:700;color:var(--text)}
+.brand:hover{text-decoration:none}
+.links{display:flex;gap:20px;flex-wrap:wrap}
+.links a{color:var(--muted);font-size:14px}
+.links a:hover{color:var(--text)}
+
+.hero{position:relative;overflow:hidden;text-align:center;padding:96px 20px 72px;background:radial-gradient(circle at 30% 20%,rgba(108,124,255,.16),transparent 45%),radial-gradient(circle at 70% 60%,rgba(77,163,255,.12),transparent 45%)}
+.badge{display:inline-block;padding:6px 16px;border-radius:999px;background:rgba(124,138,255,.12);color:var(--accent);border:1px solid rgba(124,138,255,.35);font-size:13px;margin-bottom:20px}
+.hero h1{font-size:clamp(44px,9vw,76px);font-weight:800;letter-spacing:-1px;background:linear-gradient(90deg,#8ea0ff,#4da3ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tagline{color:var(--muted);font-size:18px;margin-top:12px}
+.cta{margin-top:32px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:13px 28px;border-radius:12px;font-size:16px;font-weight:600;transition:all .15s}
+.btn:hover{text-decoration:none;transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 6px 24px rgba(108,124,255,.35)}
+.btn.ghost{border:1px solid var(--border);color:var(--text);background:var(--card)}
+.btn.full{display:block;text-align:center;margin-top:16px}
+.stats{margin-top:48px;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+.stats b{display:block;font-size:22px}
+.stats span{color:var(--muted);font-size:13px}
+
+.section{max-width:1080px;margin:0 auto;padding:64px 20px}
+.section h2{font-size:28px;margin-bottom:28px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.card .icon{font-size:34px;margin-bottom:12px}
+.card h3{font-size:17px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14px}
+
+.dl-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;max-width:820px;margin:0 auto}
+.dl-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px}
+.dl-card.featured{border-color:rgba(124,138,255,.55)}
+.dl-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.dl-head h3{font-size:19px}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;background:rgba(124,138,255,.16);color:var(--accent)}
+.tag.gray{background:rgba(154,165,195,.14);color:var(--muted)}
+.dl-ver{color:var(--muted);font-size:14px;margin-bottom:14px}
+.dl-card ul{list-style:none;margin-bottom:6px}
+.dl-card li{font-size:14px;color:var(--muted);padding:5px 0 5px 22px;position:relative}
+.dl-card li::before{content:"✓";position:absolute;left:0;color:var(--accent)}
+
+.steps{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.step{display:flex;gap:18px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
+.num{flex:none;width:40px;height:40px;border-radius:50%;background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.step h3{font-size:16px;margin-bottom:4px}
+.step p{color:var(--muted);font-size:14px}
+
+#faq details{max-width:720px;margin:0 auto 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px}
+#faq summary{cursor:pointer;font-weight:600}
+#faq details p{color:var(--muted);font-size:14px;margin-top:8px}
+
+.footer{text-align:center;padding:40px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:14px}
+.tiny{font-size:12px;margin-top:8px;opacity:.7}
