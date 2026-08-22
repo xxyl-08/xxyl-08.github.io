@@ -5,6 +5,5 @@
   "forceUpdate": false,
   "blacklistedVersions": [],
   "message": "发现新版本 v1.1.0",
-  "updateUrl": "https://xxyl-08.github.io/apk/GlobalKit-v112-1.1.0-release.apk",
-  "releaseNotes": "SIM四件套伪装 + 基站伪装 + 自定义国家/经纬度 + 评论区关键词过滤 + 视频文案翻译 + 跟随系统深色"
+  "updateUrl": "https://github.com/Xposed-Modules-Repo/com.tiktok.unlocker/releases/latest/download/gk-release.apk"
 }

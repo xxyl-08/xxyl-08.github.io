@@ -3,86 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GlobalKit — TikTok 地区解锁模块</title>
-<meta name="description" content="基于 LSPosed 的 TikTok 地区解锁模块：一键切换国家、城市、运营商与语言，评论区自动翻译。">
+<title>GlobalKit 下载</title>
+<meta name="description" content="GlobalKit — TikTok 地区解锁模块下载">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
-<link rel="stylesheet" href="style.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#0f1220,#1a1f33);color:#e8eaff;text-align:center;padding:24px}
+  .logo{font-size:56px;margin-bottom:8px}
+  h1{font-size:28px;font-weight:700}
+  .sub{color:#a9b2d8;margin:8px 0 8px;font-size:15px}
+  .ver{color:#8ea0ff;font-size:14px;margin-bottom:28px}
+  .btn{display:inline-block;padding:16px 48px;border-radius:14px;background:linear-gradient(90deg,#4da3ff,#8ea0ff);color:#fff;font-size:18px;font-weight:600;text-decoration:none;box-shadow:0 8px 24px rgba(77,163,255,.35);transition:transform .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .foot{margin-top:48px;color:#5b6385;font-size:12px}
+</style>
 </head>
 <body>
-<header class="nav">
-  <div class="nav-inner">
-    <a class="brand" href="#top">🌍 GlobalKit</a>
-    <nav class="links">
-      <a href="#features">功能</a>
-      <a href="#download">下载</a>
-      <a href="#guide">教程</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-  </div>
-</header>
-
-<section class="hero" id="top">
+  <div class="logo">🌍</div>
   <h1>GlobalKit</h1>
-  <p class="tagline">一键切换 TikTok 地区 / 城市 / 运营商 / 语言</p>
-  <div class="cta">
-    <a class="btn primary" href="#download">⬇ 立即下载 <span id="hero-ver">v1.0.7</span></a>
-  </div>
-  <div class="stats">
-    <div><b id="stat-ver">v1.0.7</b><span>最新版本</span></div>
-    <div><b>24h</b><span>配置热刷新</span></div>
-  </div>
-</section>
-
-<section id="features" class="section">
-  <h2>核心功能</h2>
-  <div class="grid">
-    <div class="card"><div class="icon">🌍</div><h3>国家 / 地区切换</h3><p>内置多国配置（越南、泰国等），一键切换推荐地区，精准到城市与运营商。</p></div>
-    <div class="card"><div class="icon">🏙️</div><h3>城市选择</h3><p>每个国家内置主要城市与运营商组合，模拟真实当地用户环境。</p></div>
-    <div class="card"><div class="icon">📡</div><h3>运营商模拟</h3><p>支持当地主流运营商配置，提升区域内容匹配度。</p></div>
-    <div class="card"><div class="icon">🌐</div><h3>语言切换</h3><p>自由切换界面与内容语言，跨语种浏览无障碍。</p></div>
-    <div class="card"><div class="icon">💬</div><h3>评论区自动翻译</h3><p>评论区一键翻译为中文（开发中），异步加载不卡顿。</p></div>
-    <div class="card"><div class="icon">🔄</div><h3>远程配置更新</h3><p>启动自动拉取远程配置，版本更新与停用策略实时生效。</p></div>
-  </div>
-</section>
-
-<section id="download" class="section">
-  <h2>下载</h2>
-  <div class="dl-cards">
-    <div class="dl-card featured">
-      <div class="dl-head"><h3>正式版</h3><span class="tag">推荐</span></div>
-      <div class="dl-ver">v1.0.7 · 版本号 109</div>
-      <ul>
-        <li>R8 混淆压缩，体积 1.3 MB</li>
-        <li>含越南 / 泰国地区配置</li>
-        <li>修复更改国家不生效问题</li>
-      </ul>
-      <a class="btn primary full" href="apk/GlobalKit-v109-1.0.7-release.apk">⬇ 下载 APK</a>
-    </div>
-  </div>
-</section>
-
-<section id="guide" class="section">
-  <h2>安装教程</h2>
-  <div class="steps">
-    <div class="step"><div class="num">1</div><div><h3>Root 手机</h3><p>刷入 Magisk / KernelSU 获取 Root 权限。</p></div></div>
-    <div class="step"><div class="num">2</div><div><h3>安装 LSPosed</h3><p>安装 LSPosed（Zygisk 版）并激活。</p></div></div>
-    <div class="step"><div class="num">3</div><div><h3>安装并启用模块</h3><p>安装本页 APK，LSPosed 中勾选 GlobalKit，作用域勾选 TikTok，重启。</p></div></div>
-    <div class="step"><div class="num">4</div><div><h3>选择地区生效</h3><p>打开 App 选择国家 / 城市 / 运营商 / 语言，保存后重启 TikTok。</p></div></div>
-  </div>
-</section>
-
-<section id="faq" class="section">
-  <h2>常见问题</h2>
-  <details><summary>需要 Root 吗？</summary><p>需要。模块基于 LSPosed/Xposed 框架运行，必须 Root 并安装 LSPosed。</p></details>
-  <details><summary>切换后没有生效？</summary><p>确认 LSPosed 模块与 TikTok 作用域已勾选；切换后完全重启 TikTok；必要时清除 TikTok 缓存。</p></details>
-  <details><summary>会封号吗？</summary><p>模块仅模拟设备参数，不注入内容流量，风险较低；任何第三方修改均有风险，请自行评估。</p></details>
-</section>
-
-<footer class="footer">
-  <p>GlobalKit · © 2026 xxyl-08</p>
-  <p class="tiny">本工具仅供学习研究，请遵守当地法律法规及平台条款。</p>
-</footer>
-
-<script src="script.js"></script>
+  <p class="sub">TikTok 地区解锁模块</p>
+  <p class="ver">最新版本 v1.1.0</p>
+  <a class="btn" href="https://github.com/Xposed-Modules-Repo/com.tiktok.unlocker/releases/latest/download/gk-release.apk">⬇ 下载 APK</a>
+  <p class="foot">GlobalKit · © 2026 xxyl-08</p>
 </body>
 </html>
