@@ -1,9 +1,9 @@
 {
-  "latestVersionCode": 112,
-  "latestVersionName": "1.1.0",
+  "latestVersionCode": 121,
+  "latestVersionName": "1.1.9",
   "minSupportedVersionCode": 106,
   "forceUpdate": false,
   "blacklistedVersions": [],
-  "message": "发现新版本 v1.1.0",
-  "updateUrl": "https://github.com/Xposed-Modules-Repo/com.tiktok.unlocker/releases/latest/download/gk-release.apk"
+  "message": "新增快捷设置磁贴入口；移除钉钉加群链接",
+  "updateUrl": "https://xxyl-08.github.io/apk/GlobalKit-v121-1.1.9-release.apk"
 }
