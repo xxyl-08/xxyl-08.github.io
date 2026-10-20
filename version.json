@@ -1,9 +1,9 @@
 {
-  "latestVersionCode": 125,
-  "latestVersionName": "1.2.3",
+  "latestVersionCode": 126,
+  "latestVersionName": "1.2.4",
   "minSupportedVersionCode": 106,
   "forceUpdate": false,
   "blacklistedVersions": [],
-  "message": "新增快捷设置磁贴入口；移除钉钉加群链接",
+  "message": "更新至 1.2.4",
   "updateUrl": "https://xxyl-08.github.io/"
 }
