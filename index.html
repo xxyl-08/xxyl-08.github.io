@@ -32,7 +32,6 @@
 (function () {
   var OWNER = 'xxyl-08';
   var REPO  = 'xxyl-08.github.io';
-  var SITE  = 'https://' + OWNER + '.github.io/';
   var REL_LATEST = 'https://github.com/' + OWNER + '/' + REPO + '/releases/latest';
 
   var verEl = document.getElementById('ver');
@@ -103,31 +102,14 @@
       apply(best, bestApk.browser_download_url);
     })
     .catch(function (err) {
-      // ② 回退：扫描 apk/ 目录（兼容旧方式）
-      fetch('https://data.jsdelivr.com/v1/packages/gh/' + OWNER + '/' + REPO + '@main?structure=flat&ts=' + Date.now(),
-            { cache: 'no-store' })
-        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-        .then(function (d) {
-          var files = (d.files || []).map(function (f) { return String(f.name).replace(/^\//, ''); });
-          var best = null, bestFile = null;
-          for (var i = 0; i < files.length; i++) {
-            if (!/\.apk$/i.test(files[i])) continue;
-            var p = parseVer(files[i]);
-            if (!p) continue;
-            if (!best || p.code > best.code) { best = p; bestFile = files[i]; }
-          }
-          if (!best) throw 0;
-          apply(best, SITE + bestFile);
-        })
-        .catch(function () {
-          // ③ 全部失败：指向 Release 页面，仍可下载
-          verEl.textContent = '最新版本';
-          dlEl.href = REL_LATEST;
-          msgEl.textContent = (err && err.rateLimited)
-            ? '接口请求过于频繁，请点下载按钮前往 Release 页面自行选择。'
-            : '';
-          autoDownload(REL_LATEST);
-        });
+      // 查询失败一律不猜版本：只把按钮指向 Release 页面，让用户自己选
+      // （限流时绝不能拿 jsDelivr 的过期快照冒充「最新版本」）
+      verEl.textContent = '最新版本';
+      dlEl.href = REL_LATEST;
+      msgEl.textContent = (err && err.rateLimited)
+        ? '接口请求过于频繁，暂时无法显示版本号。请点击下载按钮前往 Release 页面自行选择。'
+        : '暂时无法获取版本号，请点击下载按钮前往 Release 页面选择。';
+      autoDownload(REL_LATEST);
     });
 })();
 </script>
