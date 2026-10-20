@@ -70,69 +70,46 @@
     return true;
   }
 
-  // 兜底：只指向 Release 页面，绝不猜版本
-  function fallback(text) {
-    verEl.textContent = '最新版本';
-    dlEl.href = REL_LATEST;
-    msgEl.textContent = text;
-    autoDownload(REL_LATEST);
-  }
-
   var ts = '?ts=' + Date.now();
 
-  // ① 首选：本仓库的 version.json（GitHub Pages 静态文件，不计入 API 限流）
-  fetch('version.json' + ts, { cache: 'no-store' })
+  // ① 首选：GitHub Release（在仓库「发布」里挂 APK 即可，无需上传 apk/ 目录）
+  fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/releases' + ts,
+        { cache: 'no-store' })
     .then(function (r) {
+      if (r.status === 403) throw { rateLimited: true };
       if (!r.ok) throw 0;
       return r.json();
     })
-    .then(function (v) {
-      var name = v.latestVersionName || v.versionName || '';
-      var code = v.latestVersionCode || v.versionCode || 0;
-      if (!name) throw 0;
+    .then(function (list) {
+      if (!list || !list.length) throw 0;
+      var rels = list.filter(function (x) { return !x.draft && !x.prerelease; });
+      if (!rels.length) rels = list;
 
-      var url;
-      if (v.apkUrl) {
-        url = v.apkUrl;
-      } else if (v.apk) {
-        url = 'https://github.com/' + OWNER + '/' + REPO +
-              '/releases/download/v' + code + '-' + name + '/' + v.apk;
-      } else {
-        url = REL_LATEST;
+      var best = null, bestApk = null;
+      for (var i = 0; i < rels.length; i++) {
+        var rel = rels[i];
+        var p = parseVer(rel.tag_name) || parseVer(rel.name);
+        if (!p) continue;
+        var apk = null;
+        for (var j = 0; j < (rel.assets || []).length; j++) {
+          if (/\.apk$/i.test(rel.assets[j].name)) { apk = rel.assets[j]; break; }
+        }
+        if (!apk) continue;
+        if (!best || p.code > best.code) { best = p; bestApk = apk; }
       }
-      apply({ code: code, name: name }, url);
-    })
-    .catch(function () {
-      // ② 次选：GitHub Release API（可能限流，仅作兜底）
-      fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/releases' + ts,
-            { cache: 'no-store' })
-        .then(function (r) {
-          if (!r.ok) throw 0;
-          return r.json();
-        })
-        .then(function (list) {
-          if (!list || !list.length) throw 0;
-          var rels = list.filter(function (x) { return !x.draft && !x.prerelease; });
-          if (!rels.length) rels = list;
 
-          var best = null, bestApk = null;
-          for (var i = 0; i < rels.length; i++) {
-            var rel = rels[i];
-            var p = parseVer(rel.tag_name) || parseVer(rel.name);
-            if (!p) continue;
-            var apk = null;
-            for (var j = 0; j < (rel.assets || []).length; j++) {
-              if (/\.apk$/i.test(rel.assets[j].name)) { apk = rel.assets[j]; break; }
-            }
-            if (!apk) continue;
-            if (!best || p.code > best.code) { best = p; bestApk = apk; }
-          }
-          if (!best) throw 0;
-          apply(best, bestApk.browser_download_url);
-        })
-        .catch(function () {
-          fallback('暂时无法获取版本号，请点击下载按钮前往 Release 页面选择。');
-        });
+      if (!best) throw 0;
+      apply(best, bestApk.browser_download_url);
+    })
+    .catch(function (err) {
+      // 查询失败一律不猜版本：只把按钮指向 Release 页面，让用户自己选
+      // （限流时绝不能拿 jsDelivr 的过期快照冒充「最新版本」）
+      verEl.textContent = '最新版本';
+      dlEl.href = REL_LATEST;
+      msgEl.textContent = (err && err.rateLimited)
+        ? '接口请求过于频繁，暂时无法显示版本号。请点击下载按钮前往 Release 页面自行选择。'
+        : '暂时无法获取版本号，请点击下载按钮前往 Release 页面选择。';
+      autoDownload(REL_LATEST);
     });
 })();
 </script>
