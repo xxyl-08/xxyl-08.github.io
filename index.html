@@ -12,9 +12,10 @@
   .logo{font-size:56px;margin-bottom:8px}
   h1{font-size:28px;font-weight:700}
   .sub{color:#a9b2d8;margin:8px 0 8px;font-size:15px}
-  .ver{color:#8ea0ff;font-size:14px;margin-bottom:28px}
+  .ver{color:#8ea0ff;font-size:14px;margin-bottom:28px;min-height:20px}
   .btn{display:inline-block;padding:16px 48px;border-radius:14px;background:linear-gradient(90deg,#4da3ff,#8ea0ff);color:#fff;font-size:18px;font-weight:600;text-decoration:none;box-shadow:0 8px 24px rgba(77,163,255,.35);transition:transform .15s}
   .btn:hover{transform:translateY(-2px)}
+  .msg{max-width:520px;color:#8f9ac4;font-size:13px;line-height:1.6;margin-top:20px;white-space:pre-wrap}
   .foot{margin-top:48px;color:#5b6385;font-size:12px}
 </style>
 </head>
@@ -22,8 +23,73 @@
   <div class="logo">🌍</div>
   <h1>GlobalKit</h1>
   <p class="sub">TikTok 地区解锁模块</p>
-  <p class="ver">最新版本 v1.1.9</p>
-  <a class="btn" href="https://xxyl-08.github.io/apk/GlobalKit-v121-1.1.9-release.apk">⬇ 下载 APK</a>
+  <p class="ver" id="ver">最新版本</p>
+  <a class="btn" id="dl" href="https://xxyl-08.github.io/apk/GlobalKit-v121-1.1.9-release.apk">⬇ 下载 APK</a>
+  <p class="msg" id="msg"></p>
   <p class="foot">GlobalKit · © 2026 xxyl-08</p>
+
+<script>
+(function () {
+  var OWNER = 'xxyl-08';
+  var REPO  = 'xxyl-08.github.io';
+  var SITE  = 'https://' + OWNER + '.github.io/';
+  var FALLBACK_APK = SITE + 'apk/GlobalKit-v121-1.1.9-release.apk';
+
+  var verEl = document.getElementById('ver');
+  var dlEl  = document.getElementById('dl');
+  var msgEl = document.getElementById('msg');
+
+  // GlobalKit-v121-1.1.9-release.apk -> {code:121, name:'1.1.9', file:...}
+  function parseApk(name) {
+    var m = /-v(\d+)-([\d.]+)-/.exec(name || '');
+    if (!m) return null;
+    return { code: parseInt(m[1], 10), name: m[2], file: String(name).replace(/^\//, '') };
+  }
+
+  function pickLatest(list) {
+    var best = null;
+    for (var i = 0; i < list.length; i++) {
+      var p = parseApk(list[i]);
+      if (!p) continue;
+      if (!best || p.code > best.code) best = p;
+    }
+    return best;
+  }
+
+  function apply(p) {
+    if (!p) return false;
+    verEl.textContent = '最新版本 v' + p.name;
+    dlEl.href = SITE + p.file;
+    return true;
+  }
+
+  function done() {
+    // 全部失败时保留写歛的兜底铼接，页面仍可正常下载
+    dlEl.href = FALLBACK_APK;
+  }
+
+  var ts = '&ts=' + Date.now();  // 关键：绕过 jsDelivr 的一年缓存
+
+  // 1) jsDelivr 目录列表 API（不限流、走 CDN）
+  fetch('https://data.jsdelivr.com/v1/packages/gh/' + OWNER + '/' + REPO + '@main?structure=flat' + ts,
+        { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (d) {
+      var files = (d.files || []).map(function (f) { return f.name; });
+      if (!apply(pickLatest(files))) throw 0;
+    })
+    .catch(function () {
+      // 2) 回退：GitHub API（匿名 60 次时，仅兼底）
+      fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/apk' + ts,
+            { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (arr) {
+          var names = (arr || []).map(function (f) { return f.name; });
+          if (!apply(pickLatest(names))) throw 0;
+        })
+        .catch(done);
+    });
+})();
+</script>
 </body>
 </html>
