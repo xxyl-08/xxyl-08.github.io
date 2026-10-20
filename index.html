@@ -39,6 +39,10 @@
   var dlEl  = document.getElementById('dl');
   var msgEl = document.getElementById('msg');
 
+  // 从 App「检查更新」跳转过来时带 auto=1，页面加载后自动触发下载
+  var AUTO = /[?&]auto=1(&|$)/.test(location.search);
+  var fired = false;
+
   // 解析版本号：v125-1.2.3 / GlobalKit-v125-1.2.3-release.apk
   function parseVer(s) {
     var m = /v(\d+)-([\d.]+)/.exec(s || '');
@@ -46,10 +50,24 @@
     return { code: parseInt(m[1], 10), name: m[2] };
   }
 
+  function autoDownload(url) {
+    if (!AUTO || fired) return;
+    fired = true;
+    msgEl.textContent = '正在开始下载…如果没反应，请点击上方按钮。';
+    // 用隐藏 iframe 触发，避免打断当前页面
+    var f = document.createElement('iframe');
+    f.style.display = 'none';
+    f.src = url;
+    document.body.appendChild(f);
+    // 兜底：1.2 秒后仍无下载，直接跳转
+    setTimeout(function () { location.href = url; }, 1200);
+  }
+
   function apply(p, url) {
     if (!p) return false;
     verEl.textContent = '最新版本 v' + p.name;
     dlEl.href = url;
+    autoDownload(url);
     return true;
   }
 
@@ -108,6 +126,7 @@
           msgEl.textContent = (err && err.rateLimited)
             ? '接口请求过于频繁，请点下载按钮前往 Release 页面自行选择。'
             : '';
+          autoDownload(REL_LATEST);
         });
     });
 })();
