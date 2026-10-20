@@ -23,8 +23,8 @@
   <div class="logo">🌍</div>
   <h1>GlobalKit</h1>
   <p class="sub">TikTok 地区解锁模块</p>
-  <p class="ver" id="ver">最新版本</p>
-  <a class="btn" id="dl" href="https://xxyl-08.github.io/apk/GlobalKit-v121-1.1.9-release.apk">⬇ 下载 APK</a>
+  <p class="ver" id="ver">正在获取最新版本…</p>
+  <a class="btn" id="dl" href="https://github.com/xxyl-08/xxyl-08.github.io/releases/latest">⬇ 下载 APK</a>
   <p class="msg" id="msg"></p>
   <p class="foot">GlobalKit · © 2026 xxyl-08</p>
 
@@ -33,61 +33,82 @@
   var OWNER = 'xxyl-08';
   var REPO  = 'xxyl-08.github.io';
   var SITE  = 'https://' + OWNER + '.github.io/';
-  var FALLBACK_APK = SITE + 'apk/GlobalKit-v121-1.1.9-release.apk';
+  var REL_LATEST = 'https://github.com/' + OWNER + '/' + REPO + '/releases/latest';
 
   var verEl = document.getElementById('ver');
   var dlEl  = document.getElementById('dl');
   var msgEl = document.getElementById('msg');
 
-  // GlobalKit-v121-1.1.9-release.apk -> {code:121, name:'1.1.9', file:...}
-  function parseApk(name) {
-    var m = /-v(\d+)-([\d.]+)-/.exec(name || '');
+  // 解析版本号：v125-1.2.3 / GlobalKit-v125-1.2.3-release.apk
+  function parseVer(s) {
+    var m = /v(\d+)-([\d.]+)/.exec(s || '');
     if (!m) return null;
-    return { code: parseInt(m[1], 10), name: m[2], file: String(name).replace(/^\//, '') };
+    return { code: parseInt(m[1], 10), name: m[2] };
   }
 
-  function pickLatest(list) {
-    var best = null;
-    for (var i = 0; i < list.length; i++) {
-      var p = parseApk(list[i]);
-      if (!p) continue;
-      if (!best || p.code > best.code) best = p;
-    }
-    return best;
-  }
-
-  function apply(p) {
+  function apply(p, url) {
     if (!p) return false;
     verEl.textContent = '最新版本 v' + p.name;
-    dlEl.href = SITE + p.file;
+    dlEl.href = url;
     return true;
   }
 
-  function done() {
-    // 全部失败时保留写歛的兜底铼接，页面仍可正常下载
-    dlEl.href = FALLBACK_APK;
-  }
+  var ts = '?ts=' + Date.now();
 
-  var ts = '&ts=' + Date.now();  // 关键：绕过 jsDelivr 的一年缓存
-
-  // 1) jsDelivr 目录列表 API（不限流、走 CDN）
-  fetch('https://data.jsdelivr.com/v1/packages/gh/' + OWNER + '/' + REPO + '@main?structure=flat' + ts,
+  // ① 首选：GitHub Release（在仓库「发布」里挂 APK 即可，无需上传 apk/ 目录）
+  fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/releases' + ts,
         { cache: 'no-store' })
-    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-    .then(function (d) {
-      var files = (d.files || []).map(function (f) { return f.name; });
-      if (!apply(pickLatest(files))) throw 0;
+    .then(function (r) {
+      if (r.status === 403) throw { rateLimited: true };
+      if (!r.ok) throw 0;
+      return r.json();
     })
-    .catch(function () {
-      // 2) 回退：GitHub API（匿名 60 次时，仅兼底）
-      fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/apk' + ts,
+    .then(function (list) {
+      if (!list || !list.length) throw 0;
+      var rels = list.filter(function (x) { return !x.draft && !x.prerelease; });
+      if (!rels.length) rels = list;
+
+      var best = null, bestApk = null;
+      for (var i = 0; i < rels.length; i++) {
+        var rel = rels[i];
+        var p = parseVer(rel.tag_name) || parseVer(rel.name);
+        if (!p) continue;
+        var apk = null;
+        for (var j = 0; j < (rel.assets || []).length; j++) {
+          if (/\.apk$/i.test(rel.assets[j].name)) { apk = rel.assets[j]; break; }
+        }
+        if (!apk) continue;
+        if (!best || p.code > best.code) { best = p; bestApk = apk; }
+      }
+
+      if (!best) throw 0;
+      apply(best, bestApk.browser_download_url);
+    })
+    .catch(function (err) {
+      // ② 回退：扫描 apk/ 目录（兼容旧方式）
+      fetch('https://data.jsdelivr.com/v1/packages/gh/' + OWNER + '/' + REPO + '@main?structure=flat&ts=' + Date.now(),
             { cache: 'no-store' })
         .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-        .then(function (arr) {
-          var names = (arr || []).map(function (f) { return f.name; });
-          if (!apply(pickLatest(names))) throw 0;
+        .then(function (d) {
+          var files = (d.files || []).map(function (f) { return String(f.name).replace(/^\//, ''); });
+          var best = null, bestFile = null;
+          for (var i = 0; i < files.length; i++) {
+            if (!/\.apk$/i.test(files[i])) continue;
+            var p = parseVer(files[i]);
+            if (!p) continue;
+            if (!best || p.code > best.code) { best = p; bestFile = files[i]; }
+          }
+          if (!best) throw 0;
+          apply(best, SITE + bestFile);
         })
-        .catch(done);
+        .catch(function () {
+          // ③ 全部失败：指向 Release 页面，仍可下载
+          verEl.textContent = '最新版本';
+          dlEl.href = REL_LATEST;
+          msgEl.textContent = (err && err.rateLimited)
+            ? '接口请求过于频繁，请点下载按钮前往 Release 页面自行选择。'
+            : '';
+        });
     });
 })();
 </script>
